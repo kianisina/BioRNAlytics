@@ -1,0 +1,32 @@
+{
+  "name": "web",
+  "version": "0.0.0",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@quasar/extras": "^1.18.0",
+    "axios": "^1.14.0",
+    "leaflet": "^1.9.4",
+    "pinia": "^3.0.4",
+    "quasar": "^2.19.3",
+    "vue": "^3.5.31",
+    "vue-i18n": "^11.4.0",
+    "vue-router": "^5.0.4"
+  },
+  "devDependencies": {
+    "@quasar/vite-plugin": "^1.11.0",
+    "@vitejs/plugin-vue": "^6.0.5",
+    "sass": "^1.99.0",
+    "sass-loader": "^16.0.7",
+    "vite": "^5.4.21",
+    "vite-plugin-pwa": "^0.19.8",
+    "vite-plugin-vue-devtools": "^7.7.9",
+    "vue-cli-plugin-quasar": "~5.1.2"
+  },
+  "engines": {
+    "node": "^20.19.0 || >=22.12.0"
+  }
+}

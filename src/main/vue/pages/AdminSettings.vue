@@ -10,7 +10,7 @@ const companyName = ref('');
 const fontColor = ref('#000000');
 const backgroundColor = ref('#FFFFFF');
 const imprintText = ref('');
-const logoFile = ref(null); // Will ONLY hold a new File object if the user selects one
+const logoFile = ref(null); 
 const companyId = ref('m-map');
 const $q = useQuasar()
 const selectedTab = ref('userManagement');
@@ -28,15 +28,14 @@ const fetchSettings = async () => {
     backgroundColor.value = settingsStore.corporateDesign.backgroundColor;
     imprintText.value = settingsStore.corporateDesign.imprintText;
     
-    // DO NOT assign the backend base64 string to logoFile.value!
-    // logoFile should remain null unless the user uploads a new image.
+    
     logoFile.value = null; 
 };
 
 const saveSettings = async () => {
     const formData = new FormData();
     
-    // Only append the file if the user actually selected a NEW file
+    
     if (logoFile.value instanceof File) {
         formData.append('file', logoFile.value);
     }

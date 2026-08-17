@@ -107,17 +107,17 @@ function finishEditing() {
 .readonly-input {
     background-color: #f0f0f0;
     color: #888;
-    text-align: center; /* Center the text */
+    text-align: center; 
 }
 .centered-username {
     display: flex;
     justify-content: center;
-    align-items: center; /* Center align vertically */
+    align-items: center; 
 }
 .centered-input {
-    width: 100%; /* Ensure full width */
-    text-align: center; /* Center the text */
-    font-size: 2.2em; /* Increase the font size */
+    width: 100%; 
+    text-align: center; 
+    font-size: 2.2em; 
 }
-/* Add your styles here if necessary */
+
 </style>

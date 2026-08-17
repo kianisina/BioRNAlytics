@@ -66,7 +66,7 @@ function sendResetInstructions() {
 .custom-card-section div {
     width: 300px;
     max-width: 300px;
-    word-wrap: break-word; /* Optional: to ensure long words break and fit within the width */
+    word-wrap: break-word;
 }
 .col-auto {
     background-color: #ffffff;

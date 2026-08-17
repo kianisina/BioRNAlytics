@@ -1,14 +1,10 @@
-# ==============================================================================
-# Spring Boot + RabbitMQ DESeq2 Pipeline Script (Multi-Contrast Edition)
-# ==============================================================================
-
 args <- commandArgs(trailingOnly = TRUE)
 if (length(args) == 0) { stop("FATAL ERROR: No job directory provided!") }
 job_dir <- args[1]
 setwd(job_dir)
 cat("Starting DESeq2 Analysis in directory:", job_dir, "\n")
 
-# 2. LOAD LIBRARIES
+# LOAD LIBRARIES
 suppressPackageStartupMessages(library(DESeq2))
 suppressPackageStartupMessages(library(ggplot2))
 suppressPackageStartupMessages(library(ggrepel))
@@ -18,14 +14,14 @@ suppressPackageStartupMessages(library(AnnotationDbi)) # NEW
 suppressPackageStartupMessages(library(org.Hs.eg.db))  # NEW (Human Database)
 
 
-# 3. READ THE DATA
+# READ THE DATA
 # Read the first few lines to detect the separator
 sample_lines <- readLines("counts.csv", n = 5)
 
 # Grab the first line that does NOT start with a '#'
 first_data_line <- sample_lines[!grepl("^#", sample_lines)][1]
 
-# Now safely check if the actual data uses tabs or commas
+# check if the actual data uses tabs or commas
 if (grepl("\t", first_data_line)) {
   cat("Detected Tab-Separated featureCounts file.\n")
   counts <- read.delim("counts.csv", comment.char="#", check.names=FALSE, row.names=1)
@@ -36,7 +32,7 @@ if (grepl("\t", first_data_line)) {
 
 coldata <- read.csv("coldata.csv", row.names=1, check.names=FALSE)
 
-# Clean up BAM/SAM suffixes if the user forgot to remove them
+# Clean up BAM/SAM suffixes
 colnames(counts) <- basename(colnames(counts))
 colnames(counts) <- gsub("\\.bam$", "", colnames(counts), ignore.case = TRUE)
 colnames(counts) <- gsub("\\.sam$", "", colnames(counts), ignore.case = TRUE)
@@ -45,7 +41,7 @@ colnames(counts) <- gsub("\\.sorted$", "", colnames(counts), ignore.case = TRUE)
 # If it's a raw featureCounts file, delete the genomic metadata columns.
 metadata_cols <- c("Chr", "Start", "End", "Strand", "Length")
 counts <- counts[, !(colnames(counts) %in% metadata_cols)]
-# 4. DATA WRANGLING & SAFETY CHECKS
+# DATA WRANGLING & SAFETY CHECKS
 coldata$condition <- as.factor(coldata$condition)
 common_samples <- intersect(colnames(counts), rownames(coldata))
 
@@ -58,12 +54,11 @@ coldata <- coldata[common_samples, , drop=FALSE]
 counts <- round(counts)
 
 
-# 5. RUN CORE DESEQ2
 cat("Running Core DESeq2 Model...\n")
 dds <- DESeqDataSetFromMatrix(countData = counts, colData = coldata, design = ~ condition)
 dds <- DESeq(dds)
 
-# ---  OVERALL PCA PLOT ---
+
 cat("Generating PCA Plot...\n")
 # VST (Variance Stabilizing Transformation) normalizes data perfectly for PCA
 vsd <- vst(dds, blind=FALSE)
@@ -90,12 +85,11 @@ ggsave("dataset_pca.png", plot=pca_plot, width=8, height=6, dpi=300)
 keep <- rowSums(counts(dds)) >= 10
 dds <- dds[keep,]
 
-# 6. GENERATE ALL PAIRWISE COMPARISONS
-# Get all unique conditions (e.g., "control", "Ser", "Ser_p38")
+# GENERATE ALL PAIRWISE COMPARISONS
+# Get all unique conditions
 conditions <- levels(coldata$condition)
 
-# Create a matrix of all possible pairs (combinations of 2)
-# If you have 3 groups, this creates 3 pairs. If you have 5 groups, this creates 10 pairs!
+# Create a matrix of all possible pairs
 # Create a dataframe of ALL permutations (25 total: 5x5)
 all_combinations <- expand.grid(group1 = conditions, group2 = conditions)
 
@@ -107,7 +101,6 @@ pairs <- t(valid_pairs)
 
 cat("Found", ncol(pairs), "possible comparisons. Generating results...\n")
 
-# Loop through every single pair
 # Loop through every single pair
 for (i in 1:ncol(pairs)) {
 
@@ -145,10 +138,9 @@ for (i in 1:ncol(pairs)) {
     mapped_symbols[is.na(mapped_symbols)] <- res_df$Gene[is.na(mapped_symbols)]
     res_df$Symbol <- mapped_symbols
   }
-  ##heatmap
   cat("Generating Heatmap matrix for", comparison_name, "\n")
 
-  # 1. Get the top 50 significant genes sorted by lowest p-value
+  # Get the top 50 significant genes sorted by lowest p-value
   top_genes <- head(res_df$Gene[valid_rows & res_df$padj < 0.05], 50)
 
   # Only proceed if we actually have significant genes
@@ -156,19 +148,19 @@ for (i in 1:ncol(pairs)) {
     # 2. Extract their normalized counts from the 'vsd' object
     mat <- assay(vsd)[top_genes, , drop=FALSE]
 
-    # 3. Center the data (calculate Z-scores across rows)
+    # Center the data (calculate Z-scores across rows)
     mat <- mat - rowMeans(mat)
 
-    # --- THE MAGIC CLUSTERING FIX ---
+    
     # Calculate the mathematical distance between genes
     gene_dist <- dist(mat)
     # Build the hierarchical tree
     gene_tree <- hclust(gene_dist)
     # Reorder the matrix rows to match the tree!
     mat <- mat[gene_tree$order, , drop=FALSE]
-    # --------------------------------
+   
 
-    # 4. Format for export
+    # Format for export
     heatmap_df <- as.data.frame(mat)
     heatmap_df$Gene <- rownames(heatmap_df)
 
@@ -181,11 +173,9 @@ for (i in 1:ncol(pairs)) {
     write.csv(heatmap_df, file=paste0(comparison_name, "_heatmap.csv"), row.names=FALSE)
   }
 
-  # ONLY EXPORT CSV (No more HTML/PNG generation needed here!)
+  # ONLY EXPORT CSV
   csv_filename <- paste0(comparison_name, "_results.csv")
   write.csv(res_df, file=csv_filename, row.names=FALSE)
 }
-
-# Create a tiny flag file so Java knows we successfully generated everything
 writeLines("done", "status.txt")
 cat("PIPELINE COMPLETED SUCCESSFULLY!\n")

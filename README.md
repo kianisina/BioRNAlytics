@@ -5,23 +5,24 @@ RNAlytics is a web-based bioinformatics platform designed to simplify RNA-seq di
 ## Features
 
 -  **Differential Gene Expression Analysis**
-  - Upload RNA-seq count data
-  - Compare experimental groups
-  - Identify significantly differentially expressed genes (DEGs)
-  - Calculate log2 fold changes and adjusted p-values
+    - Upload RNA-seq count data
+    - Compare experimental groups
+    - Identify significantly differentially expressed genes (DEGs)
+    - Calculate log2 fold changes and adjusted p-values
 
 -  **Interactive Visualizations**
-  - Volcano plots for DEG overview
-  - Heatmaps for expression patterns
-  - Visualization of upregulated and downregulated genes
+    - PCA plot
+    - Volcano plots for DEG overview
+    - Heatmaps for expression patterns
+    - Visualization of upregulated and downregulated genes
 
 -  **Data Export**
-  - Download processed expression results as CSV files
-  - Export DEG tables for downstream analysis
+    - Download processed expression results as CSV files
+    - Export DEG tables for downstream analysis
 
 -  **User-Friendly Interface**
-  - Designed for researchers without extensive bioinformatics programming experience
-  - Streamlined workflow from raw count matrix to biological interpretation
+    - Designed for researchers without extensive bioinformatics programming experience
+    - Streamlined workflow from raw count matrix to biological interpretation
 
 ## Workflow
 
@@ -29,6 +30,7 @@ RNAlytics is a web-based bioinformatics platform designed to simplify RNA-seq di
 2. Define experimental conditions/groups
 3. Run differential expression analysis
 4. Explore results using:
+   - PCA plot
    - Volcano plots
    - Heatmaps
    - DEG tables
@@ -56,6 +58,7 @@ RNAlytics accepts:
 
 RNAlytics generates:
 
+- PCA plot
 - Differential expression table
 - Adjusted p-values (FDR)
 - Log2 fold changes
@@ -70,3 +73,7 @@ RNAlytics generates:
 - Visualization: ggplot2 / Plotly
 - Frontend: Vue
 - Database: MongoDB
+
+## License
+
+RNAlytics is released under the MIT License.

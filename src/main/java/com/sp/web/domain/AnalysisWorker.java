@@ -35,33 +35,33 @@ public class AnalysisWorker {
 
         AnalysisJob job = optionalJob.get();
         
-        // Update status in MongoDB so the frontend knows it's actually running now
+        // Update status in MongoDB
         job.setStatus("RUNNING");
         jobRepository.save(job);
 
         try {
-            // 1. Get the path to the user's specific job folder
+            // Get the path to the user's specific job folder
             
             String jobDirectoryPath = Paths.get(baseStorageDir, job.getUsername(), job.getId())
                                .toAbsolutePath()
                                .toString();
 
-            // 2. IMPORTANT FOR WINDOWS: Convert backslashes to forward slashes for R
+            
             jobDirectoryPath = jobDirectoryPath.replace("\\", "/");
 
-            // 3. Build the R terminal command
+            // Build the R terminal command
             ProcessBuilder pb = new ProcessBuilder(
                 rExecutable,        // Tell Windows exactly where Rscript.exe is
                 rScriptLocation,    // Tell Rscript exactly where your deg.R file is
-                jobDirectoryPath    // Pass the job directory as an argument (args[1] in R)
+                jobDirectoryPath    // Pass the job directory as an argument
             );
 
-            // 3. Save R logs to the folder for debugging
+            // Save R logs to the folder for debugging
             File logFile = new File(jobDirectoryPath, "r_execution.log");
             pb.redirectErrorStream(true);
             pb.redirectOutput(logFile);
 
-            // 4. Run the process
+            // Run the process
             Process process = pb.start();
             int exitCode = process.waitFor();
 
@@ -77,7 +77,7 @@ public class AnalysisWorker {
             job.setStatus("FAILED");
             e.printStackTrace();
         } finally {
-            // 5. Always save the final state back to the database
+            // Always save the final state back to the database
             jobRepository.save(job);
         }
     }

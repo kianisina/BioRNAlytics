@@ -1,13 +1,19 @@
 package com.sp.web.web;
 
-import com.sp.web.setting.Setting;
-import com.sp.web.setting.SettingService;
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import java.io.IOException;
-import java.util.Optional;
+
+import com.sp.web.setting.Setting;
+import com.sp.web.setting.SettingService;
 
 @RestController
 @RequestMapping("/api/settings")
@@ -33,7 +39,7 @@ public class SettingController {
         @RequestParam("imprintText") String imprintText
     ) throws IOException {
         
-        // 1. Fetch the existing setting. If it doesn't exist yet, create a new one.
+    
         Setting setting = settingService.getSetting().orElse(new Setting());
         
         // 2. Update the text fields
@@ -43,12 +49,10 @@ public class SettingController {
         setting.setFontColor(fontColor);
         setting.setImprintText(imprintText);
 
-        // 3. ONLY overwrite the logo if the user actually uploaded a new one
         if (file != null && !file.isEmpty()) {
             setting.setLogo(file.getBytes());
         }
 
-        // 4. Save it back to the database
         settingService.saveSetting(setting);
         
         return ResponseEntity.ok().build();

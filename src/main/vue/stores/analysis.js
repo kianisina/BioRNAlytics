@@ -43,7 +43,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
         
         try {
             const response = await analysisAPI.startAnalysis(uploadedFileId.value, designMatrix);
-            return response.data; // Returns the Job info
+            return response.data; 
         } catch (error) {
             console.error('Error starting analysis:', error);
             throw error;
@@ -68,7 +68,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
     async function fetchComparisons(jobId) {
         try {
             const response = await analysisAPI.getComparisons(jobId);
-            return response.data; // Returns array like ["control_vs_Ser", "control_vs_Ser_p38"]
+            return response.data; 
         } catch (error) {
             console.error('Error fetching comparisons:', error);
             throw error;
@@ -108,8 +108,7 @@ export const useAnalysisStore = defineStore('analysis', () => {
 
     async function getPcaUrl(jobId) {
         try {
-            // Note: You'll need to add getPca(jobId) to your api/analysis.js as well
-            // following the same axios.get(..., { responseType: 'blob' }) pattern.
+            
             const response = await analysisAPI.getPca(jobId);
             return window.URL.createObjectURL(new Blob([response.data]));
         } catch (error) {

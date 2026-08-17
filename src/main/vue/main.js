@@ -14,17 +14,17 @@ import router from './router'
 
 const app = createApp(App)
 
-// Initialize Pinia so our Auth Store works
+
 app.use(createPinia())
 app.use(router)
 
-// 2. Initialize Quasar and register ALL the components
+
 app.use(Quasar, {
-  components, // <--- THIS is the magic line that fixes your error!
+  components,
   plugins: {
-    Notify // Required for the popups
+    Notify 
   }
 })
 
-// Mount the app to the HTML
+
 app.mount('#app')

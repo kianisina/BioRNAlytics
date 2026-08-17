@@ -55,7 +55,7 @@ const uploadAndGenerate = async () => {
 
   try {
     // Grab the token directly from Pinia! 
-    // (Make sure '.token' matches whatever variable name you used in your auth.js store)
+  
     const token = authStore.token || localStorage.getItem('token'); 
     
     console.log("Checking token before sending:", token); // <-- Look at this in your F12 Console!

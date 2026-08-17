@@ -37,8 +37,6 @@
 </template>
 
 <script setup>
-// Import your modified files as child components!
-// Note: Adjust these paths if your files are in a different folder.
 import HomePanel from './Home.vue';
 import HistoryPanel from '../pages/History.vue';
 </script>

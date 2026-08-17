@@ -1,33 +1,23 @@
 package com.sp.web;
 
-import com.sp.web.domain.User;
-import com.sp.web.domain.UserRepository;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * Initialisiert die Datenbank.
- */
+import com.sp.web.domain.User;
+import com.sp.web.domain.UserRepository;
+
+
 @Service
 public class InitialiseDatabase implements InitializingBean {
-    /**
-     * initialises a user Repository.
-     */
+    
     private final UserRepository userRepository;
-    /**
-     * initialisiert die Datenbankverbindung,
-     * sodass in afterPropertiesSet daten geändert werden können.
-     * @param userRepo es soll auf das userReop zugegriffen werden.
-     */
+    
     @Autowired
     public InitialiseDatabase(final UserRepository userRepo) {
         this.userRepository = userRepo;
     }
-    /**
-     * initialises some users into the database.
-     * important: currently also deletes the entire user database everytime
-     */
+  
     @Override
     public void afterPropertiesSet() {
         this.userRepository.deleteAll();

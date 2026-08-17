@@ -18,7 +18,7 @@ public class AnalysisJob {
     
     private String comparisonSummary;
     
-    // File paths (Relative to your storage directory)
+    // File paths
     private String countFilePath;
     private String colDataFilePath;
     private String plotFileName;

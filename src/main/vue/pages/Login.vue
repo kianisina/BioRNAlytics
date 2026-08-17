@@ -12,8 +12,8 @@ const settingsStore = useSettingsStore();
 
 const username = ref('');
 const password = ref('');
-const isLoadingLogo = ref(true); // <-- Add a loading state
-const isLoadingSettings = ref(true); // <-- Add a loading state for settings as well
+const isLoadingLogo = ref(true); 
+const isLoadingSettings = ref(true); 
 
 // Fetch the logo URL from settings store
 const logoUrl = computed(() => {
@@ -26,16 +26,16 @@ const companyName = computed(() => {
     return settingsStore.corporateDesign?.companyName || 'Bioinformatics';
 });
 
-// Assuming fetchLogo returns a Promise in your Pinia store
+
 onMounted(async () => {
     try {
         await settingsStore.fetchLogo();
-        await settingsStore.fetchCorporateDesign(); // <-- Fetch company name as well
+        await settingsStore.fetchCorporateDesign(); 
     } catch (error) {
         console.error('Failed to fetch logo', error);
     } finally {
-        isLoadingLogo.value = false; // <-- Turn off loading when done
-        isLoadingSettings.value = false; // <-- Turn off settings loading when done
+        isLoadingLogo.value = false;
+        isLoadingSettings.value = false;
     }
 });
 
@@ -104,7 +104,7 @@ function goToForgotPasswordPage() {
 }
 .forget-password {
     cursor: pointer;
-    color: #0000EE; /* Adjust color as needed */
+    color: #0000EE;
     text-decoration: underline;
 }
 .col-auto {

@@ -1,20 +1,21 @@
 package com.sp.web.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
-import lombok.Data;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.MongoId;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.stream.Collectors;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import lombok.Data;
 
 @Data // Brings back your getters, setters, and constructors
 @Document(collection = "users")
@@ -59,9 +60,6 @@ public class User implements UserDetails {
         this.roles.add(role);
     }
 
-    // =======================================================================
-    // REQUIRED USERDETAILS METHODS (This makes the red lines go away)
-    // =======================================================================
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -92,8 +90,6 @@ public class User implements UserDetails {
         return this.username;
     }
 
-    // The following methods MUST return 'true' for now. 
-    // If they return false, Spring Security will block the user from logging in!
 
     @Override
     public boolean isAccountNonExpired() {

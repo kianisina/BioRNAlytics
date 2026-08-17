@@ -1,26 +1,38 @@
 package com.sp.web.web;
 
-import com.sp.web.domain.User;
-import com.sp.web.domain.UserService;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
-import java.util.*;
-import com.sp.web.domain.EmailService;
-import jakarta.mail.MessagingException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import java.time.LocalDateTime;
-/**
- * Reagiert auf http Anfragen und liefert Nutzer.
- * Einen Spezifischen mit /api/user/id
- * alle mit /api/user
- */
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.sp.web.domain.EmailService;
+import com.sp.web.domain.User;
+import com.sp.web.domain.UserService;
+
+import jakarta.mail.MessagingException;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/users")
@@ -50,11 +62,7 @@ public class UserController {
             return users;
         }
     }
-    /**
-     * liefert die Daten zu einem Nutzer.
-     * @param id id des Nutzers
-     * @return gespeicherte Daten
-     */
+    
     @GetMapping("/showUsers/{id:\\w+}")
     public User showUser(@PathVariable("id") final String id) {
         Optional<User> optionalUser = this.userService.getUser(id);
@@ -63,11 +71,7 @@ public class UserController {
         }
         return optionalUser.get();
     }
-    /**
-     * liefert die Daten zu einem Nutzer.
-     * @param user eingeloggter nutzer
-     * @return gespeicherte Daten
-     */
+   
     @GetMapping("/showCurrentUser")
     public String getLoggedInUser(@AuthenticationPrincipal User user) {
 //        Optional<User> optionalUser = this.userService.getUser(user.getUsername());
@@ -79,12 +83,7 @@ public class UserController {
         LOG.info("Recuuuuu: {}", user.getFirstname());
         return user.getUsername();
     }
-    /**
-     * Updated die Daten zu einem nutzer.
-     * @param id id des Nutzers
-     * @param userCMD enthält die Nutzerdaten.
-     * @return Daten zum speichern.
-     */
+    
     @PutMapping("/updateUser/{id:\\w+}")
     public User update(@PathVariable("id") String id, @RequestBody UserCMD userCMD) {
         //log.info("Recsuuuuu: {}", user.getFirstname());
@@ -99,11 +98,7 @@ public class UserController {
             userCMD.getAge(),
             userCMD.getCenter());
     }
-    /**
-     * Löscht einen Nutzer.
-     * @param id id des Nutzers
-     * @return ResponseEntity mit HTTP Status
-     */
+    
     @DeleteMapping("/deleteUser/{id:\\w+}")
     public ResponseEntity<?> delete(@PathVariable("id") String id) {
         Optional<User> optionalUser = userService.getUser(id);
@@ -213,5 +208,4 @@ public class UserController {
         userService.saveUser(user);
         return ResponseEntity.ok("Password reset successful");
     }
-    // Additional methods like update, delete, etc. can be added here
 }

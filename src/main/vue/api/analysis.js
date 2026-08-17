@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 export default {
-    // 1. Upload the file and track progress
+    // Upload the file and track progress
     uploadFile(file, onProgressCallback) {
         const formData = new FormData();
         formData.append('file', file);
@@ -16,7 +16,7 @@ export default {
         });
     },
 
-    // 2. Start the analysis using the fileId
+    // Start the analysis using the fileId
     startAnalysis(fileId, designMatrix) {
         const formData = new FormData();
         formData.append('fileId', fileId);
@@ -28,17 +28,17 @@ export default {
         return axios.get('/api/analysis/history');
     },
     
-    // 1. NEW: Fetch available comparisons for a job
+    // Fetch available comparisons for a job
     getComparisons(jobId) {
         return axios.get(`/api/analysis/${jobId}/comparisons`);
     },
     
-    // 2. UPDATED: Require the comparison name
+    // Require the comparison name
     getPlot(jobId, comparison) {
         return axios.get(`/api/analysis/plot/${jobId}/${comparison}`, { responseType: 'blob' });
     },
     
-    // 3. UPDATED: Require the comparison name
+    // Require the comparison name
     downloadCsv(jobId, comparison) {
         return axios.get(`/api/analysis/download/${jobId}/${comparison}`, { responseType: 'blob' });
     },

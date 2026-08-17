@@ -71,14 +71,14 @@ public class AnalysisController {
         return ResponseEntity.ok(jobs);
     }
 
-    // 1. NEW: Get the list of all generated comparisons for a job
+    
     @GetMapping("/{jobId}/comparisons")
     public ResponseEntity<List<String>> getComparisons(@PathVariable String jobId, @AuthenticationPrincipal User user) {
         List<String> comparisons = analysisService.getAvailableComparisons(user.getUsername(), jobId);
         return ResponseEntity.ok(comparisons);
     }
 
-    // 2. UPDATED: Fetch a specific Volcano Plot Image
+    
     @GetMapping("/plot/{jobId}/{comparison}")
     public ResponseEntity<Resource> getPlot(
             @PathVariable String jobId, 
@@ -102,7 +102,7 @@ public class AnalysisController {
         }
     }
 
-    // 3. UPDATED: Download a specific CSV Result
+    // Download a specific CSV Result
     @GetMapping("/download/{jobId}/{comparison}")
     public ResponseEntity<Resource> downloadCsv(
             @PathVariable String jobId, 

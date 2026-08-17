@@ -54,7 +54,7 @@ public class AnalysisServiceImpl implements AnalysisService {
     public AnalysisJob createAndStartJob(String tempFileId, String designMatrixJson, User user) throws Exception {
         String jobId = UUID.randomUUID().toString();
 
-        // 1. Save Initial Job State to DB
+        // Save Initial Job State to DB
         AnalysisJob job = new AnalysisJob();
         job.setId(jobId);
         job.setUsername(user.getUsername());
@@ -63,7 +63,7 @@ public class AnalysisServiceImpl implements AnalysisService {
         jobRepository.save(job);
 
         try {
-            // 2. Parse Design Matrix
+            // Parse Design Matrix
             ObjectMapper mapper = new ObjectMapper();
             Map<String, List<String>> designMatrix = mapper.readValue(
             designMatrixJson, new TypeReference<Map<String, List<String>>>() {}
@@ -71,17 +71,17 @@ public class AnalysisServiceImpl implements AnalysisService {
             String[] groupNames = designMatrix.keySet().toArray(new String[0]);
             job.setComparisonSummary(String.join(" vs ", groupNames));
 
-            // 3. Setup Permanent Directory
+            // Setup Permanent Directory
             Path userJobDir = Paths.get(baseStorageDir, user.getUsername(), jobId);
             Files.createDirectories(userJobDir);
 
-            // 4. Move the staged file to the permanent directory
+            // Move the staged file to the permanent directory
             Path stagedFilePath = Paths.get(baseStorageDir, "staging", tempFileId + ".csv");
             Path permanentCountsPath = Paths.get(userJobDir.toString(), "counts.csv");
             Files.move(stagedFilePath, permanentCountsPath, StandardCopyOption.REPLACE_EXISTING);
             job.setCountFilePath(permanentCountsPath.toString());
 
-            // 5. Generate coldata.csv
+            // Generate coldata.csv
             File colDataFile = new File(userJobDir.toFile(), "coldata.csv");
             try (PrintWriter pw = new PrintWriter(new FileWriter(colDataFile))) {
                 pw.println("sample_id,condition");
@@ -95,7 +95,7 @@ public class AnalysisServiceImpl implements AnalysisService {
 
             
 
-            // 7. Update Job
+            // Update Job
             job.setStatus("COMPLETED");
             job.setPlotFileName("volcano.png"); // Mocked
             job.setCsvFileName("results.csv");  // Mocked
@@ -103,7 +103,7 @@ public class AnalysisServiceImpl implements AnalysisService {
             job.setStatus("QUEUED");
             jobRepository.save(job);
 
-            // THE MAGIC: Drop the jobId into the RabbitMQ queue
+            // Drop the jobId into the RabbitMQ queue
             rabbitTemplate.convertAndSend(RabbitMQConfig.DESEQ2_QUEUE, job.getId());
             return job;
 
@@ -132,7 +132,7 @@ public class AnalysisServiceImpl implements AnalysisService {
                     paths.forEach(path -> {
                     String filename = path.getFileName().toString();
                     if (filename.endsWith("_results.csv")) {
-                        // Extract the name (e.g., ApoE3_vs_ApoE4)
+                        // Extract the name
                         comparisons.add(filename.replace("_results.csv", ""));
                     }
                     });

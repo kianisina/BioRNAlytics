@@ -158,13 +158,12 @@ function onDragStart(event, index) {
 }
 
 function onDrop(event, index) {
-    // 1. Remove the dragged column from its old position
+    // Remove the dragged column from its old position
     const draggedColName = heatmapColumns.value.splice(draggedColIndex.value, 1)[0];
-    // 2. Insert it into the new position
+    // Insert it into the new position
     heatmapColumns.value.splice(index, 0, draggedColName);
     draggedColIndex.value = null;
     
-    // 3. Instantly redraw the heatmap with the new order!
     renderHeatmap();
 }
 // -------------------------------
@@ -198,7 +197,6 @@ function renderHeatmap() {
         margin: { l: 150, r: 50, b: 100, t: 50 }
     };
 
-    // Use Plotly.react instead of newPlot! It updates existing plots much faster.
     window.Plotly.react('heatmap-container', [trace], layout);
 }
 
@@ -208,7 +206,7 @@ function handleDownload(comparison) {
     });
 }
 
-// --- Lifecycle ---
+
 onMounted(() => {
     analysisStore.fetchHistory();
     pollingInterval = setInterval(() => {
@@ -362,7 +360,7 @@ function viewLog(jobId) {
                     <q-btn icon="close" flat round dense @click="showHeatmapDialog = false" />
                 </q-card-section>
 
-                <!-- NEW: The Draggable Control Bar -->
+                <!-- The Draggable Control Bar -->
                 <q-card-section class="bg-grey-2 col-auto q-py-sm border-bottom">
                     <div class="text-caption text-grey-8 q-mb-xs">
                         <q-icon name="info" size="16px" class="q-mr-xs"/> 

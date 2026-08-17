@@ -23,7 +23,7 @@ const router = createRouter({
     name:'home',
     component: StartView, meta: {requireAuth: true},
     children: [
-      { path: '', component: Dashboard } // <-- Update this line!
+      { path: '', component: Dashboard }
     ]
   },
   {

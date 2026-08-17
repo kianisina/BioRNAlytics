@@ -6,10 +6,10 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 public interface AnalysisService {
-    // 1. Handles the initial file upload and returns a temporary file ID
+    // Handles the initial file upload and returns a temporary file ID
     String uploadTemporaryFile(MultipartFile file, User user) throws IOException;
     
-    // 2. Takes the uploaded file and the design matrix, and starts the DB/R process
+    // Takes the uploaded file and the design matrix, and starts the DB/R process
     AnalysisJob createAndStartJob(String tempFileId, String designMatrixJson, User user) throws Exception;
 
     List<AnalysisJob> getUserJobs(String username);

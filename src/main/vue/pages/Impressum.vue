@@ -17,5 +17,5 @@ const imprintText = settingsStore.corporateDesign.imprintText;
     </q-page>
 </template>
 <style scoped>
-/* Add your scoped styles here */
+
 </style>

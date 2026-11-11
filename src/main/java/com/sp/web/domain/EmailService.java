@@ -3,6 +3,7 @@ package com.sp.web.domain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.MailException;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -32,6 +33,28 @@ public class EmailService {
         }
     }
    
+
+    public boolean sendVerificationEmail(String to, String firstname, String verificationUrl) {
+        try {
+            MimeMessage message = emailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(to);
+            helper.setFrom(FROM_ADDRESS);
+            helper.setSubject("Bitte bestätige deine E-Mail-Adresse");
+            helper.setText("Hallo " + (firstname == null ? "" : firstname) + ",\n\n"
+                + "vielen Dank für deine Registrierung. Bitte bestätige deine E-Mail-Adresse "
+                + "über den folgenden Link, danach kannst du dich anmelden:\n\n"
+                + verificationUrl + "\n\n"
+                + "Der Link ist 24 Stunden gültig.");
+            emailSender.send(message);
+            LOGGER.info("Bestätigungs-Mail gesendet an: {}", to);
+            return true;
+        } catch (MessagingException | MailException e) {
+            LOGGER.error("Bestätigungs-Mail an {} konnte nicht gesendet werden", to, e);
+            return false;
+        }
+    }
+
     public void sendRepAuftragLink(String to, String abschlussUrl) {
         try {
             MimeMessage message = emailSender.createMimeMessage();

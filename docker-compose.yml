@@ -53,6 +53,9 @@ services:
       SECURITY_TOKENISSUER: secure-api
       SECURITY_TOKENAUDIENCE: secure-app
 
+      # --- Adresse der App für Links in E-Mails (Bestätigung, Passwort vergessen) ---
+      APP_BASEURL: ${APP_BASE_URL:-http://localhost:8080}
+
       # --- R-Auswertung (im Dockerfile schon gesetzt, hier zur Übersicht) ---
       APP_R_EXECUTABLE: /usr/bin/Rscript
       APP_R_SCRIPTPATH: /app/r/deg.R

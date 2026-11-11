@@ -27,9 +27,10 @@ export const useUserStore = defineStore('users', () => {
             api.auth.login(credentials.username, credentials.password).then(res => {
                 authenticate(res.headers.authorization);
                 resolve();
-            }).catch(() => {
+            }).catch((error) => {
                 authenticate(null);
-                reject();
+                // Fehler weitergeben, damit die Login-Seite den Grund anzeigen kann
+                reject(error);
             });
         });
     }

@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -45,6 +46,8 @@ public class UserController {
     private User user;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    @Value("${app.base-url:http://localhost:8080}")
+    private String baseUrl;
     @Autowired
     public UserController(UserService userService, EmailService emailService) {
         this.userService = userService;
@@ -161,7 +164,18 @@ public class UserController {
             userCMD.getCenter()
         );
         User registeredUser = userService.registerUser(newUser);
+        String verificationUrl = baseUrl + "/verify-email?token=" + registeredUser.getVerificationToken();
+        emailService.sendVerificationEmail(registeredUser.getEmail(), registeredUser.getFirstname(), verificationUrl);
         return ResponseEntity.ok(registeredUser);
+    }
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmail(@RequestBody Map<String, String> request) {
+        if (userService.verifyEmail(request.get("token"))) {
+            return ResponseEntity.ok("Email verified");
+        }
+        return ResponseEntity
+            .status(HttpStatus.BAD_REQUEST)
+            .body("Invalid or expired verification link");
     }
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> request) throws MessagingException {
@@ -183,8 +197,7 @@ public class UserController {
         LOG.info("Received email1: {}", resetToken);
         LOG.info("Received email2: {}", user.getFirstname());
         // Send reset password email with the token
-        String domainUrl = "localhost:8080";
-        String resetUrl = domainUrl + "/reset-password";
+        String resetUrl = baseUrl + "/reset-password";
         LOG.info("Received email3: {}", resetUrl);
         emailService.sendResetInstructions(user.getEmail(), resetToken, resetUrl);
         return ResponseEntity.ok("Reset password email sent successfully");

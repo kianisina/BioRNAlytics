@@ -31,20 +31,23 @@ async function register() {
             email: email.value,
             firstname: firstname.value,
             lastname: lastname.value,
-            age: age.value,
+            age: Number(age.value),
             center: center.value
         });
         $q.notify({
             type: 'positive',
             message: 'Registrierung erfolgreich',
-            caption: 'Du kannst dich nach der Freischaltung des Kontos durch Admin anmelden.',
-            timeout: 1000
+            caption: 'Wir haben dir eine E-Mail geschickt. Bitte bestätige deine E-Mail-Adresse über den Link, danach kannst du dich anmelden.',
+            timeout: 6000
         });
         goToLoginPage();
     } catch (error) {
         $q.notify({
             type: 'negative',
-            message: error.response.data,
+            // Der Server antwortet mal mit Text, mal mit einem JSON-Objekt
+            message: typeof error.response?.data === 'string'
+                ? error.response.data
+                : 'Registrierung fehlgeschlagen. Bitte alle Felder korrekt ausfüllen.',
             caption: 'Bitte versuche es erneut.',
             timeout: 1000
         });
@@ -65,7 +68,7 @@ function goToLoginPage() {
                     <q-input v-model="username" label="Benutzername" />
                     <q-input v-model="firstname" label="Vorname" />
                     <q-input v-model="lastname" label="Nachname" />
-                    <q-input v-model="age" label="Age" />
+                    <q-input v-model="age" type="number" min="0" label="Age" />
                     <q-input v-model="password" type="password" label="Passwort" />
                     <q-input v-model="email" type="email" label="E-Mail" />
                     <q-card-section>

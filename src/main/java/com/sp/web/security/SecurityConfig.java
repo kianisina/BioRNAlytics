@@ -58,6 +58,7 @@ public class SecurityConfig {
                     .requestMatchers("/api/users/forgot-password").permitAll()
                     .requestMatchers("/api/users/reset-password").permitAll()
                     .requestMatchers("/api/users/register").permitAll()
+                    .requestMatchers("/api/users/verify-email").permitAll()
                     .anyRequest().permitAll())
             .addFilter(new JwtAuthenticationFilter(authenticationManager(), securityConstants))
             .addFilter(new JwtAuthorizationFilter(authenticationManager(), userDetailsService, securityConstants, userRepository))

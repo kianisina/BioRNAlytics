@@ -1,8 +1,10 @@
 package com.sp.web.domain;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -21,6 +23,7 @@ import com.sp.web.web.NotFoundException;
 public class UserServiceImpl implements  UserService {
 
     private static final Logger LOG = LoggerFactory.getLogger(UserServiceImpl.class);
+    private static final int VERIFICATION_LINK_VALID_HOURS = 24;
     private final UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
     @Autowired
@@ -45,7 +48,10 @@ public class UserServiceImpl implements  UserService {
         //user.addRole("ROLE_USER");
         //log.info("Received first: {}", user.getSpecialistService());
         LOG.info("Received first: {}", user.getFirstname());
-        user.setAccountNonLocked(false);
+        user.setAccountNonLocked(true);
+        user.setEmailVerified(false);
+        user.setVerificationToken(UUID.randomUUID().toString());
+        user.setVerificationTokenExpiry(LocalDateTime.now().plusHours(VERIFICATION_LINK_VALID_HOURS));
         return userRepository.save(user);
     }
     @Override
@@ -93,6 +99,9 @@ public class UserServiceImpl implements  UserService {
         LOG.info("user.getPassword(aaa): {}",password);
         LOG.info("user.getPassword(),", oldUser.get().isAccountNonLocked());
         user.setAccountNonLocked(oldUser.get().isAccountNonLocked());
+        user.setEmailVerified(oldUser.get().getEmailVerified());
+        user.setVerificationToken(oldUser.get().getVerificationToken());
+        user.setVerificationTokenExpiry(oldUser.get().getVerificationTokenExpiry());
         if (password == null || password.equals("")) {
             user.setPassword(oldUser.get().getPassword());
         } else {
@@ -127,9 +136,33 @@ public class UserServiceImpl implements  UserService {
         if (userOptional.isPresent()) {
             User user = userOptional.get();
             user.setAccountNonLocked(isAccountNonLocked);
+            if (isAccountNonLocked) {
+                user.setEmailVerified(true);
+            }
             userRepository.save(user);
         }
         return userOptional;
+    }
+    @Override
+    public boolean verifyEmail(String verificationToken) {
+        if (verificationToken == null || verificationToken.isBlank()) {
+            return false;
+        }
+        Optional<User> userOptional = userRepository.findByVerificationToken(verificationToken);
+        if (userOptional.isEmpty()) {
+            return false;
+        }
+        User user = userOptional.get();
+        if (user.getVerificationTokenExpiry() == null
+            || user.getVerificationTokenExpiry().isBefore(LocalDateTime.now())) {
+            return false;
+        }
+        user.setEmailVerified(true);
+        user.setVerificationToken(null);
+        user.setVerificationTokenExpiry(null);
+        userRepository.save(user);
+        LOG.info("E-Mail bestätigt für Benutzer {}", user.getUsername());
+        return true;
     }
 
 }

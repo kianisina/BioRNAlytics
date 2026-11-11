@@ -38,6 +38,13 @@ public class User implements UserDetails {
     @JsonProperty("isAccountNonLocked")
     private boolean isAccountNonLocked;
 
+
+    private Boolean emailVerified;
+    @JsonIgnore
+    private String verificationToken;
+    @JsonIgnore
+    private LocalDateTime verificationTokenExpiry;
+
     @JsonIgnore
     private String password;
 
@@ -108,7 +115,9 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        // Spring Security lehnt den Login ab (DisabledException), solange die
+        // E-Mail-Adresse nicht bestätigt ist
+        return emailVerified == null || emailVerified;
     }
     public void setAccountNonLocked(boolean locked) {
         this.isAccountNonLocked = locked;

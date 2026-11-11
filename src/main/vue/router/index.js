@@ -4,6 +4,7 @@ import StartView from '../views/Start.vue'
 import Register from '../pages/Register.vue'
 import forgetPassword from '../pages/ForgotPassword.vue'
 import resetPassword from '../pages/ResetPassword.vue'
+import VerifyEmail from '../pages/VerifyEmail.vue'
 import user from '../views/User.vue'
 import UserManagement from '../views/UserManagement.vue'
 import { useUserStore } from '../stores/users'
@@ -49,6 +50,10 @@ const router = createRouter({
   {
     path:'/reset-password',
     component: resetPassword
+  },
+  {
+    path:'/verify-email',
+    component: VerifyEmail
   },
   {
     path:'/user/:id',

@@ -7,13 +7,17 @@ import jakarta.servlet.FilterChain;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.authentication.LockedException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -63,5 +67,19 @@ public final class JwtAuthenticationFilter extends UsernamePasswordAuthenticatio
         } else {
             LOG.error("Principal not expected Type: {}",principal.getClass().getName());
         }
+    }
+    // Teilt dem Frontend mit, warum der Login fehlgeschlagen ist
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                              AuthenticationException failed) throws IOException {
+        String reason = "BAD_CREDENTIALS";
+        if (failed instanceof DisabledException) {
+            reason = "EMAIL_NOT_VERIFIED";
+        } else if (failed instanceof LockedException) {
+            reason = "ACCOUNT_LOCKED";
+        }
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("text/plain;charset=UTF-8");
+        response.getWriter().write(reason);
     }
 }

@@ -47,12 +47,29 @@ function login() {
         router.push('/');
         userStore.requestCurrentUser();
     }).catch((error) => {
-        $q.notify({
-            type: 'negative',
-            message: 'Login Fehlgeschlagen',
-            caption: 'Falsches Passwort oder Benutzername',
-            timeout: 1000
-        });
+        const reason = error?.response?.data;
+        if (reason === 'EMAIL_NOT_VERIFIED') {
+            $q.notify({
+                type: 'warning',
+                message: 'E-Mail-Adresse noch nicht bestätigt',
+                caption: 'Bitte klicke auf den Link in der Bestätigungs-Mail, die wir dir geschickt haben.',
+                timeout: 5000
+            });
+        } else if (reason === 'ACCOUNT_LOCKED') {
+            $q.notify({
+                type: 'negative',
+                message: 'Konto gesperrt',
+                caption: 'Bitte wende dich an einen Admin.',
+                timeout: 5000
+            });
+        } else {
+            $q.notify({
+                type: 'negative',
+                message: 'Login Fehlgeschlagen',
+                caption: 'Falsches Passwort oder Benutzername',
+                timeout: 1000
+            });
+        }
     });
 }
 

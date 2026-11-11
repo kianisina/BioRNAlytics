@@ -36,5 +36,8 @@ export default {
     },
     resetPassword(token, password) {
         return axios.post('/api/users/reset-password', { token, password });
+    },
+    verifyEmail(token) {
+        return axios.post('/api/users/verify-email', { token });
     }
 }

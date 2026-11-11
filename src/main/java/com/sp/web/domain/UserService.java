@@ -27,5 +27,6 @@ public interface  UserService extends UserDetailsService {
     void saveUser(User user);
     void deleteUser(String id);
     Optional<User> toggleAccountLockStatus(String username, boolean isAccountNonLocked);
+    boolean verifyEmail(String verificationToken);
 
 }

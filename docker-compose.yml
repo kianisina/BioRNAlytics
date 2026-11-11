@@ -68,7 +68,9 @@ services:
     restart: unless-stopped
 
   mongo:
-    image: mongo:8
+    # MongoDB 7, not 8: MongoDB 8.x refuses to start on Linux kernel 6.19+
+    # (https://jira.mongodb.org/browse/SERVER-121912)
+    image: mongo:7
     container_name: biornalytics-mongo
     volumes:
       - mongo-data:/data/db

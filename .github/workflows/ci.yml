@@ -9,16 +9,14 @@ permissions:
   contents: read
 
 jobs:
-
+  # Builds frontend and backend and runs the tests.
   build-and-test:
     runs-on: ubuntu-latest
 
-
+    # The tests start the full Spring application and therefore need
+    # MongoDB and RabbitMQ (configuration: src/test/resources/application.properties).
+    # MongoDB is started in a step below so its logs are visible if it fails.
     services:
-      mongo:
-        image: mongo:8
-        ports:
-          - 27017:27017
       rabbitmq:
         image: rabbitmq:4
         ports:
@@ -33,6 +31,20 @@ jobs:
       - name: Download repository code
         uses: actions/checkout@v6
 
+      - name: Start MongoDB
+        run: |
+          docker run -d --name mongo -p 27017:27017 mongo:8
+          for i in $(seq 1 30); do
+            if docker exec mongo mongosh --quiet --eval "db.adminCommand({ ping: 1 }).ok" > /dev/null 2>&1; then
+              echo "MongoDB is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          echo "MongoDB did not start. Container logs:"
+          docker logs mongo
+          exit 1
+
       - name: Set up Java 26
         uses: actions/setup-java@v6
         with:
@@ -43,6 +55,7 @@ jobs:
       - name: Build application and run unit tests
         run: mvn --batch-mode --no-transfer-progress -DskipUTs=false verify
 
+  # Checks that the Docker image (used by reviewers) can be built.
   docker-build:
     runs-on: ubuntu-latest
 

@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import api from '../api'
 import { useSettingsStore } from '@/main/vue/stores/settings';
 
-// Wird über den Link in der Bestätigungs-Mail aufgerufen: /verify-email?token=...
+// Opened via the link in the verification email: /verify-email?token=...
 const settingsStore = useSettingsStore();
 const logoUrl = computed(() => {
     const logo = settingsStore.corporateDesign.logo;

@@ -46,6 +46,7 @@ public class UserController {
     private User user;
     @Autowired
     private PasswordEncoder passwordEncoder;
+    // Public URL of the app (used for links in emails)
     @Value("${app.base-url:http://localhost:8080}")
     private String baseUrl;
     @Autowired

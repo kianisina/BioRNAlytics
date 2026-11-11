@@ -48,6 +48,8 @@ public class UserServiceImpl implements  UserService {
         //user.addRole("ROLE_USER");
         //log.info("Received first: {}", user.getSpecialistService());
         LOG.info("Received first: {}", user.getFirstname());
+        // The account is not locked, but only becomes active after the link in
+        // the verification email has been clicked (see User.isEnabled)
         user.setAccountNonLocked(true);
         user.setEmailVerified(false);
         user.setVerificationToken(UUID.randomUUID().toString());
@@ -137,6 +139,8 @@ public class UserServiceImpl implements  UserService {
             User user = userOptional.get();
             user.setAccountNonLocked(isAccountNonLocked);
             if (isAccountNonLocked) {
+                // Unlocking by an admin also activates the account without email
+                // verification (e.g. if the email never arrived)
                 user.setEmailVerified(true);
             }
             userRepository.save(user);
@@ -161,7 +165,7 @@ public class UserServiceImpl implements  UserService {
         user.setVerificationToken(null);
         user.setVerificationTokenExpiry(null);
         userRepository.save(user);
-        LOG.info("E-Mail bestätigt für Benutzer {}", user.getUsername());
+        LOG.info("Email verified for user {}", user.getUsername());
         return true;
     }
 

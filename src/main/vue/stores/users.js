@@ -29,7 +29,7 @@ export const useUserStore = defineStore('users', () => {
                 resolve();
             }).catch((error) => {
                 authenticate(null);
-                // Fehler weitergeben, damit die Login-Seite den Grund anzeigen kann
+                // Pass the error on so the login page can show the reason
                 reject(error);
             });
         });

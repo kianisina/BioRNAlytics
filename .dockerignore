@@ -1,0 +1,25 @@
+# Build-Ergebnisse und Abhängigkeiten werden im Container neu erzeugt
+target/
+node/
+node_modules/
+dist/
+dev-dist/
+
+# Git und Editor
+.git/
+.github/
+.idea/
+.vscode/
+
+# R-Arbeitsdateien (groß und für das Image nicht nötig)
+src/main/r/.RData
+src/main/r/.Rhistory
+.Rproj.user/
+
+# Lokale Konfiguration NICHT ins Image kopieren: sie kann Passwörter
+# und Windows-Pfade enthalten. Im Container kommt alles aus
+# docker-compose.yml bzw. der .env-Datei.
+src/main/resources/application.properties
+.env
+
+*.log

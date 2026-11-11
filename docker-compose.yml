@@ -1,0 +1,97 @@
+# BioRNAlytics komplett starten:
+#   docker compose up --build
+#
+# Danach:
+#   App ............ http://localhost:8080
+#   E-Mails ........ http://localhost:8025   (Mailpit fängt alle Mails ab)
+#   RabbitMQ-Admin . http://localhost:15672  (guest / guest)
+
+services:
+
+  app:
+    build: .
+    image: biornalytics:latest
+    container_name: biornalytics-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      mongo:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      mailpit:
+        condition: service_started
+    environment:
+      # --- MongoDB ---
+      # Standard: die leere MongoDB aus diesem Compose-Projekt.
+      # Mit MONGODB_URI in der .env kann stattdessen eine bestehende
+      # Datenbank (z. B. MongoDB Atlas) benutzt werden.
+      # Spring Boot 4 liest spring.mongodb.*, ältere Versionen spring.data.mongodb.*
+      SPRING_MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/biornalytics}
+      SPRING_DATA_MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/biornalytics}
+
+      # --- RabbitMQ (Job-Warteschlange für die R-Analysen) ---
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_PORT: 5672
+      SPRING_RABBITMQ_USERNAME: guest
+      SPRING_RABBITMQ_PASSWORD: guest
+
+      # --- E-Mail (Passwort vergessen) geht an Mailpit statt an echtes SMTP ---
+      SPRING_MAIL_HOST: mailpit
+      SPRING_MAIL_PORT: 1025
+
+      # --- Upload-Größe für Count-Matrizen ---
+      SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 200MB
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 200MB
+
+      # --- JWT-Login (SecurityConstant.java) ---
+      SECURITY_AUTHLOGINURL: /api/authenticate
+      SECURITY_JWTSECRET: ${JWT_SECRET:-biornalytics-lokaler-entwicklungs-schluessel-bitte-fuer-produktion-in-env-ersetzen}
+      SECURITY_TOKENPREFIX: "Bearer "
+      SECURITY_TOKENHEADER: Authorization
+      SECURITY_TOKENTYPE: JWT
+      SECURITY_TOKENISSUER: secure-api
+      SECURITY_TOKENAUDIENCE: secure-app
+
+      # --- R-Auswertung (im Dockerfile schon gesetzt, hier zur Übersicht) ---
+      APP_R_EXECUTABLE: /usr/bin/Rscript
+      APP_R_SCRIPTPATH: /app/r/deg.R
+      APP_STORAGE_BASEDIR: /data
+    volumes:
+      # Standard: Docker-Volume. Mit ANALYSIS_DATA_DIR in der .env kann ein
+      # Ordner auf dem Rechner eingebunden werden (z. B. C:/bioinformatics/data),
+      # damit ältere Analysen samt Plots und CSVs sichtbar sind.
+      - ${ANALYSIS_DATA_DIR:-analysis-data}:/data
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:8
+    container_name: biornalytics-mongo
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  rabbitmq:
+    image: rabbitmq:4-management
+    container_name: biornalytics-rabbitmq
+    ports:
+      - "15672:15672"
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: biornalytics-mailpit
+    ports:
+      - "8025:8025"
+
+volumes:
+  mongo-data:
+  analysis-data:

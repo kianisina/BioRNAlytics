@@ -66,6 +66,27 @@ RNAlytics generates:
 - Heatmap
 - Downloadable CSV results
 
+## Quick Start with Docker
+
+The easiest way to run RNAlytics is with Docker. You only need [Docker Desktop](https://www.docker.com/products/docker-desktop/) (or Docker Engine with the Compose plugin). Java, R, DESeq2, MongoDB and RabbitMQ are all included in the containers.
+
+```bash
+git clone https://github.com/kianisina/BioRNAlytics.git
+cd BioRNAlytics
+cp .env.example .env        # optional: set your own JWT secret
+docker compose up --build
+```
+
+The first build takes several minutes (it installs R and the Bioconductor packages). Afterwards the following services are available:
+
+| Service | URL |
+|---|---|
+| RNAlytics web app | http://localhost:8080 |
+| Mail inbox (password reset emails) | http://localhost:8025 |
+| RabbitMQ management | http://localhost:15672 (guest / guest) |
+
+Stop everything with `docker compose down`. Add `-v` to also delete the database and all analysis results.
+
 ## Technologies
 
 - Backend: Java / R
@@ -76,4 +97,4 @@ RNAlytics generates:
 
 ## License
 
-RNAlytics is released under the MIT License.
+RNAlytics is released under the MIT License.

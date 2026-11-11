@@ -118,6 +118,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.48</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
@@ -143,13 +144,12 @@
                     <parameters>true</parameters>
                     <debug>true</debug>
                     <debuglevel>lines,vars,source</debuglevel>
-                    <source>21</source>
-                    <target>21</target>
-                    
+
                     <annotationProcessorPaths>
                         <path>
                             <groupId>org.projectlombok</groupId>
                             <artifactId>lombok</artifactId>
+                            <version>1.18.48</version>
                         </path>
                     </annotationProcessorPaths>
                     

@@ -25,7 +25,9 @@ COPY . .
 # Tests werden übersprungen, weil sie eine laufende MongoDB bräuchten.
 # -Djava.version=26 passt die Zielversion an das JDK im Image an,
 # egal welche Version lokal in der pom.xml steht.
-RUN ./mvnw -B -DskipTests -DskipUTs=true -Djava.version=26 package \
+# chmod hier nochmal, weil "COPY . ." mvnw ohne Ausführrecht überschrieben hat
+RUN chmod +x mvnw \
+ && ./mvnw -B -DskipTests -DskipUTs=true -Djava.version=26 package \
  && cp target/*.jar /build/app.jar
 
 

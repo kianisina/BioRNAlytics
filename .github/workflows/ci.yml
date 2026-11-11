@@ -9,19 +9,16 @@ permissions:
   contents: read
 
 jobs:
+
   build-and-test:
     runs-on: ubuntu-latest
+
 
     services:
       mongo:
         image: mongo:8
         ports:
           - 27017:27017
-        options: >-
-          --health-cmd "mongosh --quiet --eval 'db.adminCommand(\"ping\").ok'"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 10
       rabbitmq:
         image: rabbitmq:4
         ports:

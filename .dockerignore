@@ -1,24 +1,24 @@
-# Build-Ergebnisse und Abhängigkeiten werden im Container neu erzeugt
+# Build output and dependencies are recreated inside the container
 target/
 node/
 node_modules/
 dist/
 dev-dist/
 
-# Git und Editor
+# Git and editor files
 .git/
 .github/
 .idea/
 .vscode/
 
-# R-Arbeitsdateien (groß und für das Image nicht nötig)
+# R workspace files (large and not needed in the image)
 src/main/r/.RData
 src/main/r/.Rhistory
 .Rproj.user/
 
-# Lokale Konfiguration NICHT ins Image kopieren: sie kann Passwörter
-# und Windows-Pfade enthalten. Im Container kommt alles aus
-# docker-compose.yml bzw. der .env-Datei.
+# Never copy the local configuration into the image: it may contain
+# passwords and Windows paths. Inside the container all settings come
+# from docker-compose.yml and the .env file.
 src/main/resources/application.properties
 .env
 

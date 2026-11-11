@@ -44,7 +44,7 @@ async function register() {
     } catch (error) {
         $q.notify({
             type: 'negative',
-            // Der Server antwortet mal mit Text, mal mit einem JSON-Objekt
+            // The server responds either with plain text or with a JSON object
             message: typeof error.response?.data === 'string'
                 ? error.response.data
                 : 'Registrierung fehlgeschlagen. Bitte alle Felder korrekt ausfüllen.',

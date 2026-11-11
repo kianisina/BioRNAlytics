@@ -1,9 +1,9 @@
-# BioRNAlytics komplett starten:
+# Start the complete BioRNAlytics stack:
 #   docker compose up --build
 #
-# Danach:
+# Then open:
 #   App ............ http://localhost:8080
-#   E-Mails ........ http://localhost:8025   (Mailpit fängt alle Mails ab)
+#   Emails ......... http://localhost:8025   (Mailpit catches all emails)
 #   RabbitMQ-Admin . http://localhost:15672  (guest / guest)
 
 services:
@@ -23,52 +23,54 @@ services:
         condition: service_started
     environment:
       # --- MongoDB ---
-      # Standard: die leere MongoDB aus diesem Compose-Projekt.
-      # Mit MONGODB_URI in der .env kann stattdessen eine bestehende
-      # Datenbank (z. B. MongoDB Atlas) benutzt werden.
-      # Spring Boot 4 liest spring.mongodb.*, ältere Versionen spring.data.mongodb.*
+      # Default: the empty MongoDB from this compose project.
+      # Set MONGODB_URI in .env to use an existing database instead
+      # (e.g. MongoDB Atlas).
+      # Spring Boot 4 reads spring.mongodb.*, older versions spring.data.mongodb.*
       SPRING_MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/biornalytics}
       SPRING_DATA_MONGODB_URI: ${MONGODB_URI:-mongodb://mongo:27017/biornalytics}
 
-      # --- RabbitMQ (Job-Warteschlange für die R-Analysen) ---
+      # --- RabbitMQ (job queue for the R analyses) ---
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_PORT: 5672
       SPRING_RABBITMQ_USERNAME: guest
       SPRING_RABBITMQ_PASSWORD: guest
 
-      # --- E-Mail (Passwort vergessen) geht an Mailpit statt an echtes SMTP ---
+      # --- Email (verification, password reset) goes to Mailpit instead of real SMTP ---
       SPRING_MAIL_HOST: mailpit
       SPRING_MAIL_PORT: 1025
 
-      # --- Upload-Größe für Count-Matrizen ---
+      # --- Upload size for count matrices ---
       SPRING_SERVLET_MULTIPART_MAX_FILE_SIZE: 200MB
       SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: 200MB
 
       # --- JWT-Login (SecurityConstant.java) ---
       SECURITY_AUTHLOGINURL: /api/authenticate
-      SECURITY_JWTSECRET: ${JWT_SECRET:-biornalytics-lokaler-entwicklungs-schluessel-bitte-fuer-produktion-in-env-ersetzen}
+      SECURITY_JWTSECRET: ${JWT_SECRET:-biornalytics-local-development-key-replace-it-in-env-for-any-real-deployment}
       SECURITY_TOKENPREFIX: "Bearer "
       SECURITY_TOKENHEADER: Authorization
       SECURITY_TOKENTYPE: JWT
       SECURITY_TOKENISSUER: secure-api
       SECURITY_TOKENAUDIENCE: secure-app
 
-      # --- Adresse der App für Links in E-Mails (Bestätigung, Passwort vergessen) ---
+      # --- Public app URL used in email links (verification, password reset) ---
       APP_BASEURL: ${APP_BASE_URL:-http://localhost:8080}
 
-      # --- R-Auswertung (im Dockerfile schon gesetzt, hier zur Übersicht) ---
+      # --- R analysis (already set in the Dockerfile, listed here for clarity) ---
       APP_R_EXECUTABLE: /usr/bin/Rscript
       APP_R_SCRIPTPATH: /app/r/deg.R
       APP_STORAGE_BASEDIR: /data
     volumes:
-      # Standard: Docker-Volume. Mit ANALYSIS_DATA_DIR in der .env kann ein
-      # Ordner auf dem Rechner eingebunden werden (z. B. C:/bioinformatics/data),
-      # damit ältere Analysen samt Plots und CSVs sichtbar sind.
+      # Default: a Docker volume. Set ANALYSIS_DATA_DIR in .env to mount a
+      # folder from the host instead (e.g. C:/bioinformatics/data) so that
+      # earlier analyses with their plots and CSVs are available.
       - ${ANALYSIS_DATA_DIR:-analysis-data}:/data
     restart: unless-stopped
 
   mongo:
-    image: mongo:8
+    # MongoDB 7, not 8: MongoDB 8.x refuses to start on Linux kernel 6.19+
+    # (https://jira.mongodb.org/browse/SERVER-121912)
+    image: mongo:7
     container_name: biornalytics-mongo
     volumes:
       - mongo-data:/data/db

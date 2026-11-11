@@ -68,7 +68,7 @@ public final class JwtAuthenticationFilter extends UsernamePasswordAuthenticatio
             LOG.error("Principal not expected Type: {}",principal.getClass().getName());
         }
     }
-    // Teilt dem Frontend mit, warum der Login fehlgeschlagen ist
+    // Tells the frontend why the login failed
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                               AuthenticationException failed) throws IOException {

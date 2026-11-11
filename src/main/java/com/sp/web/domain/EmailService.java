@@ -33,7 +33,10 @@ public class EmailService {
         }
     }
    
-
+    /**
+     * Sends the email address verification link after registration.
+     * @return true if the email was sent
+     */
     public boolean sendVerificationEmail(String to, String firstname, String verificationUrl) {
         try {
             MimeMessage message = emailSender.createMimeMessage();
@@ -47,10 +50,10 @@ public class EmailService {
                 + verificationUrl + "\n\n"
                 + "Der Link ist 24 Stunden gültig.");
             emailSender.send(message);
-            LOGGER.info("Bestätigungs-Mail gesendet an: {}", to);
+            LOGGER.info("Verification email sent to: {}", to);
             return true;
         } catch (MessagingException | MailException e) {
-            LOGGER.error("Bestätigungs-Mail an {} konnte nicht gesendet werden", to, e);
+            LOGGER.error("Failed to send verification email to: {}", to, e);
             return false;
         }
     }

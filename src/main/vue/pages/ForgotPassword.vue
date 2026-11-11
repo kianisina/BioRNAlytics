@@ -7,7 +7,7 @@ import { useSettingsStore } from '@/main/vue/stores/settings';
 const settingsStore = useSettingsStore();
 const logoUrl = computed(() => {
     const logo = settingsStore.corporateDesign.logo;
-    return logo ? `data:image/png;base64,${logo}` : 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Deutsche_Bahn_AG-Logo.svg';
+    return logo ? `data:image/png;base64,${logo}` : '/logo.png';
 });
 const $q = useQuasar()
 const router = useRouter()

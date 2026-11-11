@@ -36,7 +36,7 @@ onMounted(async () => {
 // Create a computed property for the logo URL
 const logoUrl = computed(() => {
     const logo = settingsStore.corporateDesign?.logo;
-    return logo ? `data:image/png;base64,${logo}` : 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Deutsche_Bahn_AG-Logo.svg';
+    return logo ? `data:image/png;base64,${logo}` : '/logo.png';
 });
 const companyName = computed(() => {
     return settingsStore.corporateDesign?.companyName || 'Bioinformatics';
@@ -71,8 +71,9 @@ const companyName = computed(() => {
                     color: settingsStore.corporateDesign?.fontColor
                 }"
             >
-                <q-route-tab to="/profile" label="Profil" icon="account_circle" />
-                <q-route-tab to="/home" label="Home" icon="home" />
+                <q-route-tab to="/profile" label="Profile" icon="account_circle" />
+                <q-route-tab to="/" label="Home" icon="home" />
+                <q-route-tab to="/home" label="Upload" icon="upload" />
                 <q-route-tab to="/history" label="History" icon="history" />
                 <q-route-tab to="/admin-settings" label="admin settings" icon="settings" />
             </q-tabs>

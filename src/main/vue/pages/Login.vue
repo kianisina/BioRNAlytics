@@ -20,7 +20,7 @@ const logoUrl = computed(() => {
     const logo = settingsStore.corporateDesign?.logo;
     return logo 
         ? `data:image/png;base64,${logo}` 
-        : 'https://upload.wikimedia.org/wikipedia/commons/d/d5/Deutsche_Bahn_AG-Logo.svg';
+        : '/logo.png';
 });
 const companyName = computed(() => {
     return settingsStore.corporateDesign?.companyName || 'Bioinformatics';
